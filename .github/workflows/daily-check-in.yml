@@ -2,7 +2,7 @@ name: Daily Check-in
 
 on:
   schedule:
-    - cron: '0 */12 * * *'  # 每12小时执行一次
+    - cron: '30 8,20 * * *'  # 每12小时执行一次，早8和晚8
   workflow_dispatch:
 
 jobs:
@@ -50,6 +50,28 @@ jobs:
           -d chat_id=${{ env.TELEGRAM_USERID }} \
           -d parse_mode=HTML \
           -d text="❌ <b>LINUX DO</b> 每日签到失败"
+
+      - name: Send PushPlus Success Notification
+        env:
+          PUSHPLUS_TOKEN: ${{ secrets.PUSHPLUS_TOKEN }}
+        if: ${{ success() && env.PUSHPLUS_TOKEN != '' }}
+        run: |
+          curl -s -X POST "https://www.pushplus.plus/send" \
+          -d token=${{ env.PUSHPLUS_TOKEN }} \
+          -d template=html \
+          -d title="Github Action" \
+          -d content="✅ <b>LINUX DO</b> 每日签到成功"
+
+      - name: Send PushPlus Failure Notification
+        env:
+          PUSHPLUS_TOKEN: ${{ secrets.PUSHPLUS_TOKEN }}
+        if: ${{ failure() && env.PUSHPLUS_TOKEN != '' }}
+        run: |
+          curl -s -X POST "https://www.pushplus.plus/send" \
+          -d token=${{ env.PUSHPLUS_TOKEN }} \
+          -d template=html \
+          -d title="Github Action" \
+          -d content="❌ <b>LINUX DO</b> 每日签到失败"
 
       - name: Delete workflow runs
         uses: Mattraks/delete-workflow-runs@v2

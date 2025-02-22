@@ -54,6 +54,15 @@
 
 未配置时将自动跳过通知功能，不影响签到。
 
+## PushPlus 通知
+
+可选功能：配置 PushPlus 通知，实时获取签到结果。
+
+需要在 GitHub Secrets 中配置：
+- `PUSHPLUS_TOKEN`：PushPlus Token
+
+未配置时将自动跳过通知功能，不影响签到。
+
 ## 自动更新
 
 默认状态下自动更新是关闭的，[点击此处](https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/blob/main/README_CN.md#%E6%89%93%E5%BC%80%E8%87%AA%E5%8A%A8%E6%9B%B4%E6%96%B0)查看打开自动更新步骤。

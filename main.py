@@ -42,14 +42,26 @@ class LinuxDoBrowser:
     def __init__(self) -> None:
         self.pw = sync_playwright().start()
         self.browser = self.pw.firefox.launch(headless=True, timeout=30000)
-        self.context = self.browser.new_context()
+        # 配置上下文以伪装真实浏览器
+        self.context = self.browser.new_context(
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:130.0) Gecko/20100101 Firefox/130.0",
+            viewport={"width": 1280, "height": 720},
+            java_script_enabled=True,
+            ignore_https_errors=False,
+            locale="en-US"
+        )
         self.page = self.context.new_page()
         self.page.goto(HOME_URL)
 
     def login(self):
         logger.info("开始登录")
+        logger.info(f"Current URL after navigating to login: {self.page.url}")
         self.page.goto(LOGIN_URL)
+        self.page.wait_for_load_state("networkidle")  # 等待网络空闲
+        logger.info("登录页面加载完成")
         time.sleep(2)
+        logger.info(f"Current URL after waiting: {self.page.url}")
+        logger.info(f"Current page: {self.page.content()}")
         self.page.fill("#login-account-name", USERNAME)
         time.sleep(2)
         self.page.fill("#login-account-password", PASSWORD)
